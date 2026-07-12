@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Enter applicant details to receive an AI-powered credit card approval prediction." />
+  <title>Credit Card Approval Prediction | Form</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    /* ── Form-page specific ────────────────────────────────────────────── */
+    .progress-steps {
+      display         : flex;
+      justify-content : center;
+      align-items     : center;
+      gap             : 8px;
+      margin-bottom   : 40px;
+    }
+
+    .ps-step {
+      display     : flex;
+      align-items : center;
+      gap         : 8px;
+      font-size   : 0.82rem;
+      font-weight : 600;
+      color       : var(--text-muted);
+    }
+
+    .ps-step.active { color: var(--accent-purple); }
+    .ps-step.done   { color: var(--accent-green); }
+
+    .ps-dot {
+      width           : 28px;
+      height          : 28px;
+      border-radius   : 50%;
+      background      : rgba(255,255,255,0.06);
+      border          : 1px solid var(--border-color);
+      display         : flex;
+      align-items     : center;
+      justify-content : center;
+      font-size       : 0.75rem;
+      font-weight     : 700;
+      transition      : var(--transition);
+    }
+
+    .ps-step.active .ps-dot {
+      background   : var(--grad-primary);
+      border-color : transparent;
+      color        : white;
+    }
+
+    .ps-connector {
+      width      : 32px;
+      height     : 2px;
+      background : var(--border-color);
+      border-radius: var(--radius-full);
+    }
+
+    /* Input with icon */
+    .input-wrapper {
+      position : relative;
+    }
+
+    .input-icon {
+      position  : absolute;
+      left      : 14px;
+      top       : 50%;
+      transform : translateY(-50%);
+      font-size : 1rem;
+      pointer-events: none;
+      z-index   : 1;
+    }
+
+    .input-wrapper input,
+    .input-wrapper select {
+      padding-left : 40px;
+    }
+
+    /* Section accent border */
+    .form-section-block {
+      padding       : 28px;
+      border-radius : var(--radius-lg);
+      background    : rgba(255,255,255,0.02);
+      border        : 1px solid var(--border-color);
+      margin-bottom : 24px;
+      transition    : var(--transition);
+    }
+
+    .form-section-block:focus-within {
+      border-color : rgba(139,92,246,0.35);
+      background   : rgba(139,92,246,0.03);
+    }
+
+    /* Range slider */
+    input[type="range"] {
+      -webkit-appearance : none;
+      width              : 100%;
+      height             : 5px;
+      background         : rgba(255,255,255,0.1);
+      border-radius      : var(--radius-full);
+      outline            : none;
+      padding            : 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance : none;
+      width              : 18px;
+      height             : 18px;
+      border-radius      : 50%;
+      background         : var(--grad-primary);
+      cursor             : pointer;
+      box-shadow         : 0 0 8px rgba(139,92,246,0.6);
+    }
+
+    /* Info note */
+    .form-note {
+      font-size    : 0.78rem;
+      color        : var(--text-muted);
+      margin-top   : 4px;
+      padding-left : 2px;
+    }
+
+    /* Floating label animation */
+    .floating-group {
+      position : relative;
+    }
+
+    /* Disclaimer banner */
+    .info-banner {
+      display       : flex;
+      align-items   : flex-start;
+      gap           : 12px;
+      padding       : 14px 18px;
+      background    : rgba(59,130,246,0.08);
+      border        : 1px solid rgba(59,130,246,0.25);
+      border-radius : var(--radius-md);
+      margin-bottom : 32px;
+      font-size     : 0.85rem;
+      color         : #93c5fd;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="navbar-brand">
+      <div class="brand-icon">💳</div>
+      Credit Card Approval Prediction
+    </a>
+    <div class="navbar-links">
+      <a href="{{ url_for('home') }}"   class="nav-link">Home</a>
+      <a href="{{ url_for('form') }}"   class="nav-link active">Predict</a>
+    </div>
+    <a href="{{ url_for('home') }}" class="btn btn-outline" style="padding:9px 22px;font-size:0.88rem;">
+      ← Back
+    </a>
+  </nav>
+
+  <div class="page-container">
+
+    <!-- Page Header -->
+    <div class="page-header animate-fade-up">
+      <div class="badge badge-purple" style="margin-bottom:12px; display:inline-flex;">
+        💳 Credit Assessment
+      </div>
+      <h1>Applicant Details</h1>
+      <p>Fill in the form below to get your instant credit card approval prediction.</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps animate-fade-in">
+      <div class="ps-step active">
+        <div class="ps-dot">1</div>
+        <span>Personal</span>
+      </div>
+      <div class="ps-connector"></div>
+      <div class="ps-step active">
+        <div class="ps-dot">2</div>
+        <span>Financial</span>
+      </div>
+      <div class="ps-connector"></div>
+      <div class="ps-step active">
+        <div class="ps-dot">3</div>
+        <span>Family</span>
+      </div>
+      <div class="ps-connector"></div>
+      <div class="ps-step active">
+        <div class="ps-dot">4</div>
+        <span>Credit</span>
+      </div>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner animate-fade-in">
+      <span style="font-size:1.1rem; flex-shrink:0;">ℹ️</span>
+      <span>All fields are required. Days Birth and Days Employed should be entered as positive numbers (e.g., enter <strong>12000</strong> for ~33 years old). The model handles the sign internally.</span>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card animate-fade-up" style="animation-delay:0.2s">
+      <form action="{{ url_for('predict') }}" method="POST" id="predictionForm">
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 1 — Personal Information -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="form-section-block">
+          <div class="form-section-title">
+            <span>👤</span> Personal Information
+          </div>
+
+          <div class="form-grid">
+            <!-- Gender -->
+            <div class="form-group">
+              <label for="CODE_GENDER">Gender</label>
+              <div class="input-wrapper">
+                <span class="input-icon">⚧</span>
+                <select id="CODE_GENDER" name="CODE_GENDER" required>
+                  <option value="" disabled selected>Select gender</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Own Car -->
+            <div class="form-group">
+              <label for="FLAG_OWN_CAR">Owns a Car?</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🚗</span>
+                <select id="FLAG_OWN_CAR" name="FLAG_OWN_CAR" required>
+                  <option value="" disabled selected>Select</option>
+                  <option value="Y">Yes</option>
+                  <option value="N">No</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Own Realty -->
+            <div class="form-group">
+              <label for="FLAG_OWN_REALTY">Owns Real Estate?</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏠</span>
+                <select id="FLAG_OWN_REALTY" name="FLAG_OWN_REALTY" required>
+                  <option value="" disabled selected>Select</option>
+                  <option value="Y">Yes</option>
+                  <option value="N">No</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Mobile -->
+            <div class="form-group">
+              <label for="FLAG_MOBIL">Has Mobile Phone?</label>
+              <div class="input-wrapper">
+                <span class="input-icon">📱</span>
+                <select id="FLAG_MOBIL" name="FLAG_MOBIL" required>
+                  <option value="1">Yes</option>
+                  <option value="0">No</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Work Phone -->
+            <div class="form-group">
+              <label for="FLAG_WORK_PHONE">Has Work Phone?</label>
+              <div class="input-wrapper">
+                <span class="input-icon">☎️</span>
+                <select id="FLAG_WORK_PHONE" name="FLAG_WORK_PHONE" required>
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="FLAG_EMAIL">Has Email Address?</label>
+              <div class="input-wrapper">
+                <span class="input-icon">📧</span>
+                <select id="FLAG_EMAIL" name="FLAG_EMAIL" required>
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 2 — Financial Information -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="form-section-block">
+          <div class="form-section-title">
+            <span>💰</span> Financial Information
+          </div>
+
+          <div class="form-grid">
+            <!-- Annual Income -->
+            <div class="form-group" style="grid-column: span 2;">
+              <label for="AMT_INCOME_TOTAL">
+                Total Annual Income (₹ / $)
+                <span data-tooltip="Enter your gross annual income">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">💵</span>
+                <input type="number" id="AMT_INCOME_TOTAL" name="AMT_INCOME_TOTAL"
+                       placeholder="e.g. 180000" min="10000" max="10000000"
+                       step="1000" required />
+              </div>
+            </div>
+
+            <!-- Income Type -->
+            <div class="form-group">
+              <label for="NAME_INCOME_TYPE">Income Type</label>
+              <div class="input-wrapper">
+                <span class="input-icon">📋</span>
+                <select id="NAME_INCOME_TYPE" name="NAME_INCOME_TYPE" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option value="Working">Working</option>
+                  <option value="Commercial associate">Commercial Associate</option>
+                  <option value="Pensioner">Pensioner</option>
+                  <option value="State servant">State Servant</option>
+                  <option value="Student">Student</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Education -->
+            <div class="form-group">
+              <label for="NAME_EDUCATION_TYPE">Education Level</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🎓</span>
+                <select id="NAME_EDUCATION_TYPE" name="NAME_EDUCATION_TYPE" required>
+                  <option value="" disabled selected>Select level</option>
+                  <option value="Higher education">Higher Education</option>
+                  <option value="Secondary / secondary special">Secondary / Secondary Special</option>
+                  <option value="Incomplete higher">Incomplete Higher</option>
+                  <option value="Lower secondary">Lower Secondary</option>
+                  <option value="Academic degree">Academic Degree</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Days Employed -->
+            <div class="form-group">
+              <label for="DAYS_EMPLOYED">
+                Days Employed
+                <span data-tooltip="Number of days you have been employed (positive number)">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏢</span>
+                <input type="number" id="DAYS_EMPLOYED" name="DAYS_EMPLOYED"
+                       placeholder="e.g. 1825 (5 years)" min="0" max="30000"
+                       step="1" required />
+              </div>
+              <span class="form-note">365 days = ~1 year of employment</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 3 — Family Information -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="form-section-block">
+          <div class="form-section-title">
+            <span>👨‍👩‍👧</span> Family Information
+          </div>
+
+          <div class="form-grid">
+            <!-- Family Status -->
+            <div class="form-group">
+              <label for="NAME_FAMILY_STATUS">Family / Marital Status</label>
+              <div class="input-wrapper">
+                <span class="input-icon">💍</span>
+                <select id="NAME_FAMILY_STATUS" name="NAME_FAMILY_STATUS" required>
+                  <option value="" disabled selected>Select status</option>
+                  <option value="Married">Married</option>
+                  <option value="Single / not married">Single / Not Married</option>
+                  <option value="Civil marriage">Civil Marriage</option>
+                  <option value="Separated">Separated</option>
+                  <option value="Widow">Widow</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Housing Type -->
+            <div class="form-group">
+              <label for="NAME_HOUSING_TYPE">Housing Type</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏡</span>
+                <select id="NAME_HOUSING_TYPE" name="NAME_HOUSING_TYPE" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option value="House / apartment">House / Apartment</option>
+                  <option value="Rented apartment">Rented Apartment</option>
+                  <option value="With parents">With Parents</option>
+                  <option value="Municipal apartment">Municipal Apartment</option>
+                  <option value="Co-op apartment">Co-op Apartment</option>
+                  <option value="Office apartment">Office Apartment</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Days Birth -->
+            <div class="form-group">
+              <label for="DAYS_BIRTH">
+                Age in Days
+                <span data-tooltip="Your age expressed in days (positive number)">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">🎂</span>
+                <input type="number" id="DAYS_BIRTH" name="DAYS_BIRTH"
+                       placeholder="e.g. 12000 (≈33 yrs)" min="6570" max="25550"
+                       step="1" required />
+              </div>
+              <span class="form-note">Multiply age (years) × 365</span>
+            </div>
+
+            <!-- Children -->
+            <div class="form-group">
+              <label for="CNT_CHILDREN">Number of Children</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👶</span>
+                <input type="number" id="CNT_CHILDREN" name="CNT_CHILDREN"
+                       placeholder="0" min="0" max="20" step="1" value="0" required />
+              </div>
+            </div>
+
+            <!-- Family Members -->
+            <div class="form-group">
+              <label for="CNT_FAM_MEMBERS">Total Family Members</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👨‍👩‍👧‍👦</span>
+                <input type="number" id="CNT_FAM_MEMBERS" name="CNT_FAM_MEMBERS"
+                       placeholder="e.g. 3" min="1" max="20" step="1" value="2" required />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 4 — Credit History -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div class="form-section-block">
+          <div class="form-section-title">
+            <span>📈</span> Credit History
+          </div>
+
+          <div class="form-grid">
+            <!-- EMI Paid Off -->
+            <div class="form-group">
+              <label for="emi_paid_off">
+                EMIs Paid Off (months)
+                <span data-tooltip="How many monthly instalments were fully paid on time">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">✅</span>
+                <input type="number" id="emi_paid_off" name="emi_paid_off"
+                       placeholder="e.g. 18" min="0" max="300" step="1" value="0" required />
+              </div>
+            </div>
+
+            <!-- EMI Overdue -->
+            <div class="form-group">
+              <label for="emi_overdue">
+                EMI Overdues (months)
+                <span data-tooltip="How many monthly payments were overdue / missed">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">⚠️</span>
+                <input type="number" id="emi_overdue" name="emi_overdue"
+                       placeholder="e.g. 0" min="0" max="300" step="1" value="0" required />
+              </div>
+            </div>
+
+            <!-- Total Loans -->
+            <div class="form-group">
+              <label for="total_loans">Number of Loan Accounts</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏦</span>
+                <input type="number" id="total_loans" name="total_loans"
+                       placeholder="e.g. 2" min="1" max="100" step="1" value="1" required />
+              </div>
+            </div>
+
+            <!-- Open Month -->
+            <div class="form-group">
+              <label for="open_month">
+                Earliest Credit Month
+                <span data-tooltip="Months before current: e.g. -36 means account opened 3 years ago. Enter as negative number.">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">📅</span>
+                <input type="number" id="open_month" name="open_month"
+                       placeholder="e.g. -36" min="-200" max="0" step="1" value="-12" required />
+              </div>
+              <span class="form-note">Negative value — months before today</span>
+            </div>
+
+            <!-- End Month -->
+            <div class="form-group">
+              <label for="end_month">
+                Latest Credit Month
+                <span data-tooltip="Most recent credit month. Usually 0 (current month).">ⓘ</span>
+              </label>
+              <div class="input-wrapper">
+                <span class="input-icon">📅</span>
+                <input type="number" id="end_month" name="end_month"
+                       placeholder="e.g. 0" min="-200" max="0" step="1" value="0" required />
+              </div>
+              <span class="form-note">0 = current month</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-wrapper">
+          <button type="submit" class="btn-submit" id="submitBtn">
+            🔮 Predict Approval
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Credit Card Approval Prediction &mdash; <span>ML-Powered System</span></p>
+  </footer>
+
+  <script>
+    // Animate submit button on click
+    const form = document.getElementById('predictionForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function() {
+      submitBtn.textContent = '⏳ Analyzing…';
+      submitBtn.style.opacity = '0.8';
+      submitBtn.disabled = true;
+    });
+
+    // Sync end_month to always be >= open_month
+    const openM = document.getElementById('open_month');
+    const endM  = document.getElementById('end_month');
+
+    openM.addEventListener('change', () => {
+      if (parseFloat(endM.value) < parseFloat(openM.value)) {
+        endM.value = openM.value;
+      }
+    });
+  </script>
+
+</body>
+</html>

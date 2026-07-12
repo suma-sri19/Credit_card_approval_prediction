@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Credit Card Approval Prediction System — ML-powered application that predicts credit card approval using applicant demographic and financial data." />
+  <title>Credit Card Approval Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    /* ── Home-page specific styles ─────────────────────────────────────── */
+    .hero-highlight {
+      display          : inline-block;
+      background       : var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip  : text;
+      background-size  : 200% 200%;
+      animation        : gradientShift 4s ease infinite;
+    }
+
+    .pipeline-section {
+      max-width : 1100px;
+      margin    : 80px auto 0;
+      padding   : 0 40px;
+    }
+
+    .pipeline-grid {
+      display               : grid;
+      grid-template-columns : repeat(auto-fill, minmax(180px, 1fr));
+      gap                   : 12px;
+      margin-top            : 36px;
+    }
+
+    .pipeline-step {
+      display        : flex;
+      flex-direction : column;
+      align-items    : center;
+      gap            : 10px;
+      padding        : 24px 16px;
+      border-radius  : var(--radius-md);
+      background     : var(--bg-card);
+      border         : 1px solid var(--border-color);
+      text-align     : center;
+      transition     : var(--transition);
+      position       : relative;
+    }
+
+    .pipeline-step:hover {
+      border-color : var(--border-glow);
+      background   : var(--bg-card-hover);
+      transform    : translateY(-3px);
+    }
+
+    .step-number {
+      width           : 30px;
+      height          : 30px;
+      border-radius   : 50%;
+      background      : var(--grad-primary);
+      display         : flex;
+      align-items     : center;
+      justify-content : center;
+      font-size       : 0.75rem;
+      font-weight     : 800;
+      color           : white;
+    }
+
+    .step-icon  { font-size: 1.5rem; }
+    .step-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+
+    /* Tech stack pills */
+    .tech-stack {
+      display     : flex;
+      flex-wrap   : wrap;
+      gap         : 10px;
+      justify-content: center;
+      margin      : 20px 0;
+    }
+
+    .tech-pill {
+      padding       : 5px 14px;
+      border-radius : var(--radius-full);
+      font-size     : 0.78rem;
+      font-weight   : 600;
+      background    : rgba(255,255,255,0.06);
+      border        : 1px solid var(--border-color);
+      color         : var(--text-secondary);
+      transition    : var(--transition);
+    }
+
+    .tech-pill:hover {
+      background   : rgba(139,92,246,0.15);
+      border-color : rgba(139,92,246,0.4);
+      color        : #c4b5fd;
+    }
+
+    /* Model accuracy section */
+    .models-section {
+      max-width : 1100px;
+      margin    : 80px auto;
+      padding   : 0 40px;
+    }
+
+    .model-row {
+      display         : flex;
+      align-items     : center;
+      gap             : 16px;
+      padding         : 20px 24px;
+      border-radius   : var(--radius-md);
+      background      : var(--bg-card);
+      border          : 1px solid var(--border-color);
+      margin-bottom   : 10px;
+      transition      : var(--transition);
+    }
+
+    .model-row:hover {
+      border-color : var(--border-glow);
+      transform    : translateX(4px);
+    }
+
+    .model-name {
+      width       : 180px;
+      font-weight : 600;
+      font-size   : 0.9rem;
+      flex-shrink : 0;
+    }
+
+    .model-bar-track {
+      flex          : 1;
+      height        : 8px;
+      background    : rgba(255,255,255,0.06);
+      border-radius : var(--radius-full);
+      overflow      : hidden;
+    }
+
+    .model-bar-fill {
+      height        : 100%;
+      border-radius : var(--radius-full);
+      background    : var(--grad-primary);
+      transition    : width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .model-score {
+      width       : 60px;
+      text-align  : right;
+      font-weight : 700;
+      font-size   : 0.9rem;
+      color       : var(--accent-cyan);
+    }
+
+    .model-badge { flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="navbar-brand">
+      <div class="brand-icon">💳</div>
+      Credit Card Approval Prediction
+    </a>
+    <div class="navbar-links">
+      <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
+      <a href="{{ url_for('form') }}" class="nav-link">Predict</a>
+    </div>
+    <a href="{{ url_for('form') }}" class="btn btn-primary" style="padding: 9px 22px; font-size: 0.88rem;">
+      Get Prediction →
+    </a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" style="padding-top: 80px;">
+    <div class="hero-badge animate-fade-in" style="animation-delay:0.1s">
+      <span>🤖</span> ML-Powered Credit Intelligence
+    </div>
+
+    <h1 class="animate-fade-up" style="animation-delay:0.2s">
+      Credit Card Approval<br />
+      <span class="hero-highlight">Powered by AI</span>
+    </h1>
+
+    <p class="animate-fade-up" style="animation-delay:0.35s">
+      Our machine learning system analyzes applicant demographics, income,
+      employment history, and credit behavior to instantly predict credit
+      card approval — faster, fairer, and smarter.
+    </p>
+
+    <div class="tech-stack animate-fade-up" style="animation-delay:0.4s">
+      <span class="tech-pill">Python</span>
+      <span class="tech-pill">scikit-learn</span>
+      <span class="tech-pill">XGBoost</span>
+      <span class="tech-pill">Random Forest</span>
+      <span class="tech-pill">Flask</span>
+      <span class="tech-pill">Pandas</span>
+      <span class="tech-pill">NumPy</span>
+      <span class="tech-pill">Seaborn</span>
+    </div>
+
+    <div class="hero-actions animate-fade-up" style="animation-delay:0.5s">
+      <a href="{{ url_for('form') }}" class="btn btn-primary btn-lg">
+        🚀 Start Prediction
+      </a>
+      <a href="#pipeline" class="btn btn-outline btn-lg">
+        📖 How It Works
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar animate-fade-in" style="animation-delay:0.6s">
+    <div class="stat-item">
+      <span class="stat-value">4</span>
+      <span class="stat-label">ML Models Trained</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">~94%</span>
+      <span class="stat-label">Best Model F1-Score</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">438K+</span>
+      <span class="stat-label">Training Records</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">&lt;1s</span>
+      <span class="stat-label">Prediction Latency</span>
+    </div>
+  </div>
+
+  <!-- ML Pipeline Section -->
+  <section class="pipeline-section" id="pipeline">
+    <div class="section-header">
+      <div class="badge badge-purple" style="margin-bottom:12px">End-to-End Pipeline</div>
+      <h2>Full ML Workflow</h2>
+      <p>From raw CSV data to live prediction — every step automated.</p>
+    </div>
+
+    <div class="pipeline-grid">
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.1s">
+        <div class="step-number">1</div>
+        <span class="step-icon">📥</span>
+        <span class="step-label">Data Collection</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.15s">
+        <div class="step-number">2</div>
+        <span class="step-icon">🔍</span>
+        <span class="step-label">EDA & Analysis</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.2s">
+        <div class="step-number">3</div>
+        <span class="step-icon">🧹</span>
+        <span class="step-label">Preprocessing</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.25s">
+        <div class="step-number">4</div>
+        <span class="step-icon">⚙️</span>
+        <span class="step-label">Feature Engineering</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.3s">
+        <div class="step-number">5</div>
+        <span class="step-icon">🏷️</span>
+        <span class="step-label">Label Encoding</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.35s">
+        <div class="step-number">6</div>
+        <span class="step-icon">🤖</span>
+        <span class="step-label">Model Training</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.4s">
+        <div class="step-number">7</div>
+        <span class="step-icon">📊</span>
+        <span class="step-label">Evaluation</span>
+      </div>
+      <div class="pipeline-step animate-fade-up" style="animation-delay:0.45s">
+        <div class="step-number">8</div>
+        <span class="step-icon">🚀</span>
+        <span class="step-label">Flask Deployment</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Cards -->
+  <section class="features-section" style="margin-top: 80px;">
+    <div class="section-header">
+      <div class="badge badge-blue" style="margin-bottom:12px">Key Features</div>
+      <h2>What Makes This System Smart</h2>
+      <p>Each layer of the pipeline is engineered for accuracy and fairness.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card animate-fade-up" style="animation-delay:0.1s">
+        <div class="feature-icon" style="background:rgba(139,92,246,0.15)">📊</div>
+        <h3>Multi-Feature Analysis</h3>
+        <p>Analyzes 14+ applicant features including income type, education, employment history, family status, and housing to build a holistic risk profile.</p>
+      </div>
+
+      <div class="feature-card animate-fade-up" style="animation-delay:0.2s">
+        <div class="feature-icon" style="background:rgba(59,130,246,0.15)">🧠</div>
+        <h3>4 Competing ML Models</h3>
+        <p>Trains Logistic Regression, Decision Tree, Random Forest, and XGBoost simultaneously — selects the champion by F1-score on a held-out test set.</p>
+      </div>
+
+      <div class="feature-card animate-fade-up" style="animation-delay:0.3s">
+        <div class="feature-icon" style="background:rgba(6,182,212,0.15)">💳</div>
+        <h3>Credit History Signals</h3>
+        <p>Aggregates monthly credit records per applicant — EMI paid-off count, overdue flags, and account window — to assess repayment behavior.</p>
+      </div>
+
+      <div class="feature-card animate-fade-up" style="animation-delay:0.4s">
+        <div class="feature-icon" style="background:rgba(16,185,129,0.15)">🎯</div>
+        <h3>Hyperparameter Tuning</h3>
+        <p>RandomizedSearchCV explores hundreds of parameter combinations to push accuracy beyond the baseline and reduce overfitting.</p>
+      </div>
+
+      <div class="feature-card animate-fade-up" style="animation-delay:0.5s">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.15)">🔐</div>
+        <h3>Consistent Encoding</h3>
+        <p>Persists all LabelEncoders via Pickle — guaranteeing the exact same categorical transformations at prediction time as during training.</p>
+      </div>
+
+      <div class="feature-card animate-fade-up" style="animation-delay:0.6s">
+        <div class="feature-icon" style="background:rgba(239,68,68,0.15)">☁️</div>
+        <h3>Cloud-Ready</h3>
+        <p>Optional IBM Watson Machine Learning deployment block included — enabling scalable, real-time cloud-based prediction beyond the local Flask server.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Models Performance Section -->
+  <section class="models-section">
+    <div class="section-header">
+      <div class="badge badge-green" style="margin-bottom:12px">Model Performance</div>
+      <h2>Algorithm Comparison</h2>
+      <p>F1-scores across all four trained classifiers.</p>
+    </div>
+
+    <div class="model-row animate-fade-up" style="animation-delay:0.1s">
+      <span class="model-name">🌲 Random Forest</span>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:94%"></div></div>
+      <span class="model-score">~94%</span>
+      <span class="badge badge-green model-badge">Best</span>
+    </div>
+    <div class="model-row animate-fade-up" style="animation-delay:0.2s">
+      <span class="model-name">⚡ XGBoost</span>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:92%"></div></div>
+      <span class="model-score">~92%</span>
+      <span class="badge badge-blue model-badge">Strong</span>
+    </div>
+    <div class="model-row animate-fade-up" style="animation-delay:0.3s">
+      <span class="model-name">🌳 Decision Tree</span>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:87%"></div></div>
+      <span class="model-score">~87%</span>
+      <span class="badge badge-purple model-badge">Good</span>
+    </div>
+    <div class="model-row animate-fade-up" style="animation-delay:0.4s">
+      <span class="model-name">📈 Logistic Reg.</span>
+      <div class="model-bar-track"><div class="model-bar-fill" style="width:78%"></div></div>
+      <span class="model-score">~78%</span>
+      <span class="badge badge-blue model-badge">Baseline</span>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="max-width:1100px; margin:0 auto; padding:0 40px 100px;">
+    <div class="cta-section animate-fade-up">
+      <div class="badge badge-purple" style="margin-bottom:16px">Ready to Predict?</div>
+      <h2>Check Your Credit Card Eligibility</h2>
+      <p>Fill in your applicant details and get an instant ML-powered approval decision in under a second.</p>
+      <a href="{{ url_for('form') }}" class="btn btn-primary btn-lg">
+        💳 Start Prediction Now →
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Built with ❤️ using <span>Python · Flask · scikit-learn · XGBoost</span></p>
+    <p style="margin-top:6px; font-size:0.78rem;">Credit Card Approval Prediction System &copy; 2024</p>
+  </footer>
+
+</body>
+</html>
