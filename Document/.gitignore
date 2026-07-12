@@ -1,0 +1,49 @@
+# Byte-order-mark safe UTF-8 gitignore for Python / Flask project
+# ──────────────────────────────────────────────────
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Model artifacts (optional — uncomment to exclude large binaries)
+# model.pkl
+# encoders.pkl
+
+# EDA plots (auto-generated)
+static/assets/eda/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets / credentials
+*.env
+.env
+secrets.py
+
+# Logs
+*.log
